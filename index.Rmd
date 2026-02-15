@@ -11,4 +11,4 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to woman's health. 
+I am interested in exploring data related to woman's health. I would love to see how over time womens health has gotten better, as well as compare countries results. 
