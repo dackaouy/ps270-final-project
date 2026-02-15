@@ -1,6 +1,6 @@
 ---
 title: "PS270 Final Project"
-author: "Delphine Ackaouy"\
+author: "Delphine Ackaouy"
 description: "My final project"
 output:
   distill::distill_article:
