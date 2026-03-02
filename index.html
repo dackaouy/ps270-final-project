@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/gdp.zip","data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv","data/gdp/Metadata_Country_API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv","data/gdp/Metadata_Indicator_API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv","data/life_expectancy.zip","data/life_expectancy/life-expectancy.csv","data/life_expectancy/life-expectancy.metadata.json","data/life_expectancy/readme.md","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.30/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1546,7 +1546,40 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="d-article">
 <h2 id="project-thoughts">Project thoughts</h2>
 <p>I am interested in exploring data related to woman’s health. I would love to see how over time womens health has gotten better, as well as compare countries results.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="my-paragraph">My paragraph</h2>
+<p>How have women’s health outcomes changed over time and how do they differ across countries? I hypothesis that womens health will improve overtime in countries with strong economic development. One explanatory variable is a countries economic development, I would measure that using GDP per capita. Another explanatory variable is time, I would measured using years, which allows me to observe the changes in women’s health across decades.The outcome variable is womens health, which I would measure using women’s life expectancy or mortality rates. My hypothesis would be supported if in countries with higher GDP per capita there was a longer life expectancy or lower mortality rates for women. My hypothesis would be disproved if there is not a relationship between GDP per capita of a country and their life expectancy of women, or if in a country with high GDP per capita has a low life expectancy for women, and vice versa.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>life_expectancy</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/life_expectancy/life-expectancy.csv"</span><span class='op'>)</span></span>
+<span><span class='va'>gdp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>life_expectancy</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 4
+  Entity Code   Year `Life expectancy`
+  &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt;             &lt;dbl&gt;
+1 Africa &lt;NA&gt;   1770              26.4
+2 Africa &lt;NA&gt;   1925              26.4
+3 Africa &lt;NA&gt;   1950              37.2
+4 Africa &lt;NA&gt;   1951              37.8
+5 Africa &lt;NA&gt;   1952              38.3
+6 Africa &lt;NA&gt;   1953              38.7</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>gdp</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 3
+  `Data Source`               `World Development Indicators` ...3     
+  &lt;chr&gt;                       &lt;chr&gt;                          &lt;chr&gt;    
+1 Last Updated Date           2026-02-24                      &lt;NA&gt;    
+2 Country Name                Country Code                   &quot;Indicat…
+3 Aruba                       ABW                            &quot;GDP per…
+4 Africa Eastern and Southern AFE                            &quot;GDP per…
+5 Afghanistan                 AFG                            &quot;GDP per…
+6 Africa Western and Central  AFW                            &quot;GDP per…</code></pre>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

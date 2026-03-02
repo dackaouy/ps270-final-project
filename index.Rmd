@@ -12,3 +12,18 @@ output:
 ## Project thoughts
 
 I am interested in exploring data related to woman's health. I would love to see how over time womens health has gotten better, as well as compare countries results. 
+
+## My paragraph
+How have women’s health outcomes changed over time and how do they differ across countries? I hypothesis that womens health will improve overtime in countries with strong economic development. One explanatory variable is a countries economic development, I would measure that using GDP per capita. Another explanatory variable is time, I would measured using years, which allows me to observe the changes in women’s health across decades.The outcome variable is womens health, which I would measure using women's life expectancy or mortality rates. My hypothesis would be supported if in countries with higher GDP per capita there was a longer life expectancy or lower mortality rates for women. My hypothesis would be disproved if there is not a relationship between GDP per capita of a country and their life expectancy of women, or if in a country with high GDP per capita has a low life expectancy for women, and vice versa. 
+
+
+```{r}
+library(tidyverse)
+
+life_expectancy <- read_csv("data/life_expectancy/life-expectancy.csv")
+gdp <- read_csv("data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv")
+
+head(life_expectancy)
+head(gdp)
+```
+
