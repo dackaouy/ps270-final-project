@@ -46,4 +46,3 @@ ggplot(life_clean, aes(x = Year, y = `Life expectancy`)) +
 ```
 
 
-
