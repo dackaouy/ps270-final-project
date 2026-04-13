@@ -1554,7 +1554,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
 <span></span>
 <span><span class='va'>life_expectancy</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/life_expectancy/life-expectancy.csv"</span><span class='op'>)</span></span>
-<span><span class='va'>gdp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv"</span><span class='op'>)</span></span>
+<span><span class='va'>gdp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv"</span>, skip <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span></span>
 <span></span>
 <span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>life_expectancy</span><span class='op'>)</span></span></code></pre>
 </div>
@@ -1570,36 +1570,127 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>gdp</span><span class='op'>)</span></span></code></pre>
 </div>
-<pre><code># A tibble: 6 × 3
-  `Data Source`               `World Development Indicators` ...3     
-  &lt;chr&gt;                       &lt;chr&gt;                          &lt;chr&gt;    
-1 Last Updated Date           2026-02-24                      &lt;NA&gt;    
-2 Country Name                Country Code                   &quot;Indicat…
-3 Aruba                       ABW                            &quot;GDP per…
-4 Africa Eastern and Southern AFE                            &quot;GDP per…
-5 Afghanistan                 AFG                            &quot;GDP per…
-6 Africa Western and Central  AFW                            &quot;GDP per…</code></pre>
+<pre><code># A tibble: 6 × 71
+  `Country Name`      `Country Code` `Indicator Name` `Indicator Code`
+  &lt;chr&gt;               &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;           
+1 Aruba               ABW            GDP per capita … NY.GDP.PCAP.CD  
+2 Africa Eastern and… AFE            GDP per capita … NY.GDP.PCAP.CD  
+3 Afghanistan         AFG            GDP per capita … NY.GDP.PCAP.CD  
+4 Africa Western and… AFW            GDP per capita … NY.GDP.PCAP.CD  
+5 Angola              AGO            GDP per capita … NY.GDP.PCAP.CD  
+6 Albania             ALB            GDP per capita … NY.GDP.PCAP.CD  
+# ℹ 67 more variables: `1960` &lt;dbl&gt;, `1961` &lt;dbl&gt;, `1962` &lt;dbl&gt;,
+#   `1963` &lt;dbl&gt;, `1964` &lt;dbl&gt;, `1965` &lt;dbl&gt;, `1966` &lt;dbl&gt;,
+#   `1967` &lt;dbl&gt;, `1968` &lt;dbl&gt;, `1969` &lt;dbl&gt;, `1970` &lt;dbl&gt;,
+#   `1971` &lt;dbl&gt;, `1972` &lt;dbl&gt;, `1973` &lt;dbl&gt;, `1974` &lt;dbl&gt;,
+#   `1975` &lt;dbl&gt;, `1976` &lt;dbl&gt;, `1977` &lt;dbl&gt;, `1978` &lt;dbl&gt;,
+#   `1979` &lt;dbl&gt;, `1980` &lt;dbl&gt;, `1981` &lt;dbl&gt;, `1982` &lt;dbl&gt;,
+#   `1983` &lt;dbl&gt;, `1984` &lt;dbl&gt;, `1985` &lt;dbl&gt;, `1986` &lt;dbl&gt;, …</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>life_clean</span> <span class='op'>&lt;-</span> <span class='va'>life_expectancy</span> <span class='op'>|&gt;</span></span>
-<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>`Life expectancy`</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>`Life expectancy`</span><span class='op'>)</span>, </span>
+<span>         <span class='va'>Year</span> <span class='op'>&gt;=</span> <span class='fl'>1950</span>,</span>
+<span>         <span class='va'>Entity</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Africa"</span>, <span class='st'>"Americas"</span>, <span class='st'>"Europe"</span>, <span class='st'>"World"</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>life_clean</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>`Life expectancy`</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>0.2</span><span class='op'>)</span> <span class='op'>+</span></span>
-<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='va'>life_clean</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>Year</span>, y <span class='op'>=</span> <span class='va'>`Life expectancy`</span>, color <span class='op'>=</span> <span class='va'>Entity</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span>linewidth <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>+</span></span>
 <span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span></span>
-<span>    title <span class='op'>=</span> <span class='st'>"Life Expectancy Over Time"</span>,</span>
+<span>    title <span class='op'>=</span> <span class='st'>"Life Expectancy by Region Since 1950"</span>,</span>
 <span>    x <span class='op'>=</span> <span class='st'>"Year"</span>,</span>
 <span>    y <span class='op'>=</span> <span class='st'>"Life Expectancy"</span></span>
 <span>  <span class='op'>)</span></span></code></pre>
 </div>
 <p><img src="index_files/figure-html5/unnamed-chunk-3-1.png" alt="" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>I improved this by removing years before 1950 due to limited data and grouping the data by country and comparing selected ones. This makes the graph easier to read and more informative. These changes were made based on feedback from checkpoint three.</p>
+<p>This visualization shows that life expectancy has increased across all regions since 1950. Europe has always had the highest life expectancy, then the Americas, and Africa is the lowest. All countries improved over time, yet there is still large gaps between them.</p>
+<h2 id="milestone-4">Milestone 4</h2>
+<p>To further examine these differences, the table shows more recent life expectancy for these regions.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>visual_table</span> <span class='op'>&lt;-</span> <span class='va'>life_clean</span> <span class='op'>|&gt;</span></span>
+<span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>Entity</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>Year</span> <span class='op'>==</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>Year</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>Entity</span>, <span class='va'>Year</span>, <span class='va'>`Life expectancy`</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>`Life expectancy`</span><span class='op'>)</span><span class='op'>)</span></span>
+<span><span class='va'>visual_table</span></span></code></pre>
+</div>
+<pre><code># A tibble: 4 × 3
+# Groups:   Entity [4]
+  Entity    Year `Life expectancy`
+  &lt;chr&gt;    &lt;dbl&gt;             &lt;dbl&gt;
+1 Europe    2023              79.1
+2 Americas  2023              77.3
+3 World     2023              73.2
+4 Africa    2023              63.8</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>life_clean</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>[1] 296</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='va'>life_expectancy</span><span class='op'>$</span><span class='va'>Entity</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>[1] &quot;Africa&quot;   &quot;Americas&quot; &quot;Europe&quot;   &quot;World&quot;   </code></pre>
+</div>
+<p>The table confirms what we can see on the graph. Europe has the highest life expectancy (79.0594), while Africa has the lowest (63.8428). America’s and the world average are in between those two. This shows that even though life expectancy has improved worldwide, there is still significant regional differences. These differences may be partially explained by economic development, and higher GDP per capita may correlate with higher life expectancy.</p>
+<p>Lets check that theory.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>gdp_small</span> <span class='op'>&lt;-</span> <span class='va'>gdp</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>`Country Name`</span> <span class='op'><a href='https://rdrr.io/r/base/match.html'>%in%</a></span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span></span>
+<span>    <span class='st'>"Africa Eastern and Southern"</span>,</span>
+<span>    <span class='st'>"Europe &amp; Central Asia"</span>,</span>
+<span>    <span class='st'>"Latin America &amp; Caribbean"</span>,</span>
+<span>    <span class='st'>"World"</span></span>
+<span>  <span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='va'>`Country Name`</span>, <span class='va'>`2024`</span><span class='op'>)</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span></span>
+<span>  <span class='va'>gdp_small</span>,</span>
+<span>  col.names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Region"</span>, <span class='st'>"GDP per Capita"</span><span class='op'>)</span>,</span>
+<span>  caption <span class='op'>=</span> <span class='st'>"Most Recent GDP per Capita by Region"</span></span>
+<span><span class='op'>)</span></span></code></pre>
+</div>
+<table>
+<caption><span id="tab:unnamed-chunk-7">Table 1: </span>Most Recent GDP per Capita by Region</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Region</th>
+<th style="text-align: right;">GDP per Capita</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Africa Eastern and Southern</td>
+<td style="text-align: right;">1615.396</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Europe &amp; Central Asia</td>
+<td style="text-align: right;">31555.521</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Latin America &amp; Caribbean</td>
+<td style="text-align: right;">10737.646</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">World</td>
+<td style="text-align: right;">13631.204</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This table shows that Africa has the lowest GDP per capita and Europe has the largest. Latin America &amp; Caribbean and the World are in between those two, following the same patterns as our life expectancy.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

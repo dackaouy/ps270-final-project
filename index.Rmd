@@ -22,7 +22,7 @@ How have women’s health outcomes changed over time and how do they differ acro
 library(tidyverse)
 
 life_expectancy <- read_csv("data/life_expectancy/life-expectancy.csv")
-gdp <- read_csv("data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv")
+gdp <- read_csv("data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv", skip = 4)
 
 head(life_expectancy)
 head(gdp)
@@ -30,19 +30,69 @@ head(gdp)
 
 ```{r}
 life_clean <- life_expectancy |>
-  filter(!is.na(`Life expectancy`))
+  filter(!is.na(`Life expectancy`), 
+         Year >= 1950,
+         Entity %in% c("Africa", "Americas", "Europe", "World"))
 ```
 
 
 ```{r}
-ggplot(life_clean, aes(x = Year, y = `Life expectancy`)) +
-  geom_line(alpha = 0.2) +
-  geom_smooth() +
+ggplot(life_clean, aes(x = Year, y = `Life expectancy`, color = Entity)) +
+  geom_line(linewidth = 1) +
   labs(
-    title = "Life Expectancy Over Time",
+    title = "Life Expectancy by Region Since 1950",
     x = "Year",
     y = "Life Expectancy"
   )
 ```
+I improved this by removing years before 1950 due to limited data and grouping the data by country and comparing selected ones. This makes the graph easier to read and more informative. These changes were made based on feedback from checkpoint three. 
 
+This visualization shows that life expectancy has increased across all regions since 1950. Europe has always had the highest life expectancy, then the Americas, and Africa is the lowest. All countries improved over time, yet there is still large gaps between them. 
+
+
+## Milestone 4
+
+To further examine these differences, the table shows more recent life expectancy for these regions. 
+
+```{r}
+visual_table <- life_clean |>
+group_by(Entity) |>
+filter(Year == max(Year)) |>
+  select(Entity, Year, `Life expectancy`) |>
+  arrange(desc(`Life expectancy`))
+visual_table
+```
+
+```{r}
+nrow(life_clean)
+unique(life_expectancy$Entity)
+```
+
+
+
+
+The table confirms what we can see on the graph. Europe has the highest life expectancy (79.0594), while Africa has the lowest (63.8428). America's and the world average are in between those two. This shows that even though life expectancy has improved worldwide, there is still significant regional differences. These differences may be partially explained by economic development, and higher GDP per capita may correlate with higher life expectancy. 
+
+Lets check that theory. 
+
+```{r}
+gdp_small <- gdp |>
+  filter(`Country Name` %in% c(
+    "Africa Eastern and Southern",
+    "Europe & Central Asia",
+    "Latin America & Caribbean",
+    "World"
+  )) |>
+  select(`Country Name`, `2024`)
+```
+
+```{r}
+knitr::kable(
+  gdp_small,
+  col.names = c("Region", "GDP per Capita"),
+  caption = "Most Recent GDP per Capita by Region"
+)
+```
+
+This table shows that Africa has the lowest GDP per capita and Europe has the largest. Latin America & Caribbean and the World are in between those two, following the same patterns as our life expectancy. 
 
