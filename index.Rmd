@@ -95,4 +95,3 @@ knitr::kable(
 ```
 
 This table shows that Africa has the lowest GDP per capita and Europe has the largest. Latin America & Caribbean and the World are in between those two, following the same patterns as our life expectancy. 
-
