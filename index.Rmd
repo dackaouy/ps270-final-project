@@ -6,55 +6,44 @@ output:
   distill::distill_article:
     self_contained: false
 ---
+## Introduction 
+
+How have population health outcomes changed over time, and how do they differ across regions? **I hypothesize that life expectancy has improved over time in all regions, but that some regions have improved faster than others.**
+
+## Data Cleaning and Descriptive Visualization
+
+**My outcome variable is life expectancy, measured in years. My two explanatory variables are year (measured as years since 1950) and region (Africa, Americas, or Europe).** To evaluate my hypothesis, I will look for two patterns in the data. First, my hypothesis will be supported if the regression coefficient on year is positive and statistically significant, indicating that life expectancy increases over time. Second, it will be supported if the interaction terms between year and region are statistically significant, meaning that regions improve at different rates. If the coefficient on year is near zero or not statistically significant, I will conclude the data does not support my hypothesis.
 
 
-
-## Project thoughts
-
-I am interested in exploring data related to woman's health. I would love to see how over time womens health has gotten better, as well as compare countries results. 
-
-## My paragraph
-How have women’s health outcomes changed over time and how do they differ across countries? I hypothesis that womens health will improve overtime in countries with strong economic development. One explanatory variable is a countries economic development, I would measure that using GDP per capita. Another explanatory variable is time, I would measured using years, which allows me to observe the changes in women’s health across decades.The outcome variable is womens health, which I would measure using women's life expectancy or mortality rates. My hypothesis would be supported if in countries with higher GDP per capita there was a longer life expectancy or lower mortality rates for women. My hypothesis would be disproved if there is not a relationship between GDP per capita of a country and their life expectancy of women, or if in a country with high GDP per capita has a low life expectancy for women, and vice versa. 
-
-
-## Loading data, data cleaning, and producing one visualization
-```{r}
+```{r, echo=FALSE}
 library(tidyverse)
 
 life_expectancy <- read_csv("data/life_expectancy/life-expectancy.csv")
-gdp <- read_csv("data/gdp/API_NY.GDP.PCAP.CD_DS2_en_csv_v2_46.csv", skip = 4)
 
-head(life_expectancy)
-head(gdp)
 ```
 
-```{r}
+```{r, echo=FALSE}
 life_clean <- life_expectancy |>
   filter(!is.na(`Life expectancy`), 
          Year >= 1950,
-         Entity %in% c("Africa", "Americas", "Europe", "World"))
+         Entity %in% c("Africa", "Americas", "Europe"))
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 ggplot(life_clean, aes(x = Year, y = `Life expectancy`, color = Entity)) +
   geom_line(linewidth = 1) +
   labs(
     title = "Life Expectancy by Region Since 1950",
-    x = "Year",
+    x = "Years Since 1950",
     y = "Life Expectancy"
   )
 ```
-I improved this by removing years before 1950 due to limited data and grouping the data by country and comparing selected ones. This makes the graph easier to read and more informative. These changes were made based on feedback from checkpoint three. 
-
-This visualization shows that life expectancy has increased across all regions since 1950. Europe has always had the highest life expectancy, then the Americas, and Africa is the lowest. All countries improved over time, yet there is still large gaps between them. 
-
-
-## Milestone 4
+This visualization shows that life expectancy has increased across all regions since 1950. Europe has consistently had the highest life expectancy, then the Americas, while Africa has had the lowest. Although all regions improved over time, substantial differences remain between them.
 
 To further examine these differences, the table shows more recent life expectancy for these regions. 
 
-```{r}
+```{r, echo=FALSE}
 visual_table <- life_clean |>
 group_by(Entity) |>
 filter(Year == max(Year)) |>
@@ -63,35 +52,74 @@ filter(Year == max(Year)) |>
 visual_table
 ```
 
-```{r}
-nrow(life_clean)
-unique(life_expectancy$Entity)
-```
 
+The table confirms what we can see on the graph. Europe has the highest life expectancy (79.0594), while Africa has the lowest (63.8428). America's is in between those two. This shows that even though life expectancy has improved in all regions, there is still significant regional differences. 
 
-
-
-The table confirms what we can see on the graph. Europe has the highest life expectancy (79.0594), while Africa has the lowest (63.8428). America's and the world average are in between those two. This shows that even though life expectancy has improved worldwide, there is still significant regional differences. These differences may be partially explained by economic development, and higher GDP per capita may correlate with higher life expectancy. 
-
-Lets check that theory. 
-
-```{r}
-gdp_small <- gdp |>
-  filter(`Country Name` %in% c(
-    "Africa Eastern and Southern",
-    "Europe & Central Asia",
-    "Latin America & Caribbean",
-    "World"
-  )) |>
-  select(`Country Name`, `2024`)
-```
-
-```{r}
+```{r, echo=FALSE}
 knitr::kable(
-  gdp_small,
-  col.names = c("Region", "GDP per Capita"),
-  caption = "Most Recent GDP per Capita by Region"
+  visual_table,
+  col.names = c("Region", "Year", "Life Expectancy"),
+  caption = "Most Recent Life Expectancy by Region"
 )
 ```
 
-This table shows that Africa has the lowest GDP per capita and Europe has the largest. Latin America & Caribbean and the World are in between those two, following the same patterns as our life expectancy. 
+This table shows that Africa has the lowest life Expectancy, Europe has the largest, and America's is in between these two. 
+
+
+## Results Section 
+
+```{r, echo=FALSE}
+results_data <- life_clean |>
+  filter(Year >= 1950) |>
+  mutate(year_since_1950 = Year - 1950)
+
+results_model <- lm(`Life expectancy` ~ year_since_1950 * Entity, data = results_data)
+
+results_table <- data.frame(
+  Term = c("Intercept", "Years Since 1950", "Americas", "Europe", 
+           "Years Since 1950 × Americas", "Years Since 1950 × Europe"),
+  Estimate = round(coef(results_model), 3),
+  Std_Error = round(summary(results_model)$coefficients[,2], 3),
+  P_Value = round(summary(results_model)$coefficients[,4], 3)
+)
+
+knitr::kable(results_table, 
+             col.names = c("Term", "Estimate", "Std. Error", "P-Value"),
+             caption = "Regression Results: Life Expectancy by Year and Region",
+             row.names = FALSE)
+```
+
+
+```{r, echo=FALSE}
+life_clean |>
+  group_by(Entity) |>
+  summarize(
+    slope = coef(lm(`Life expectancy` ~ Year))[2]
+  )
+```
+
+The results shows that life expectancy increased over time in all regions, but the rate of improvement was different. Africa began with the lowest life expectancy but experienced the fastest growth over time. Europe had the highest life expectancy throughout most years, while the Americas remained between Europe and Africa. Overall, all regions improved since 1950.
+
+The regression model supports these patterns. The coefficient for years since 1950 was positive and statistically significant (0.341, p < .001), meaning life expectancy in Africa increased by about 0.34 years per year on average. The interaction terms for the Americas and Europe were negative and statistically significant, showing that their yearly increases were slower than Africa’s. The model explained most of the variation in life expectancy (R² = 0.992).
+
+These results show a strong relationship between year, region, and life expectancy. However, this is an observational, cross-sectional study, so the results should not be interpreted as causal. The main threat to causal inference is confounding variables. Many other factors that change over time, such as improvements in healthcare access, incomes, advances in medicine, and better education, could also increase life expectancy. Because these confounders are correlated with both year and life expectancy, we can't assume it is only related to time. To establish a causal effect, we would ideally need a randomized experiment,a randomized experiment is not applicable here since we cannot randomly assign people to regions or time periods. A more real path to causality would be a natural experiment or differences-in-differences design. With more time and resources, it would also be useful to collect data on potential confounders (GDP per capita, healthcare spending, and education levels) so they could be accounted for in the regression. 
+
+## Conclusion 
+
+In conclusion, the results of this project support my hypothesis that life expectancy has improved over time, although the rate of improvement differs across regions. The data showed that life expectancy increased in Africa, Americas, and Europe overall since 1950. Europe maintained the highest life expectancy levels, while Africa started the lowest but showed the fastest growth over time. The regression results also found a strong and statistically significant relationship between year, region, and life expectancy trends.There are several limitations to this analysis. First, the data is based on region averages, which may hide important differences between individual countries within each region. Second, life expectancy is influenced by many other factors not included, such as healthcare access, education, war, poverty, and government policy. Because of this, the results should not be interpreted as causal.
+
+
+
+```{r print-code, ref.label=knitr::all_labels(), echo = TRUE, eval=FALSE}
+
+```
+
+
+
+
+
+
+
+
+
+
